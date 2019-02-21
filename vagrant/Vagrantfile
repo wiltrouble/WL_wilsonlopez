@@ -1,21 +1,33 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-require 'vagrant-openstack-provider'
-  Vagrant.configure('2') do |config |
-    config.ssh.username = 'ubuntu'
-    config.ssh.private_key_path = "./new1.pem"
-    config.vm.provider :openstack do |os, override |
-      os.identity_api_version = '3'
-      os.openstack_auth_url = 'http://10.28.3.240:5000/v3'
-      os.domain_name = 'fundacion-jala'
-      os.username = 'wilsonlopez'
-      os.password = ''
-      os.tenant_name = '99c2e05a201f4744adc68ef74709dc2f'
-      os.project_name = 'fj_wilsonlopez_at08-lab'
-      os.keypair_name  = 'new1'
-      os.image = 'ubuntu-18.04-amd64-mate_desktop_19122018'
-      os.flavor = 'f4.desktop.large'
-      os.server_name = 'WL-at08-2'
-      override.vm.synced_folder '.', '/vagrant', disabled: true
-  end
+Vagrant.require_version '>= 2.0.2'
+require'vagrant-openstack-provider'
+require 'yaml'
+
+VAGRANTFILE_API_VERSION = '2'
+
+# Read YAML file with VM details (box, CPU, and RAM)
+machines = YAML.load_file(File.join(File.dirname(__FILE__),'environment.yml'))
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+ config.ssh.username = 'ubuntu'
+ config.ssh.private_key_path = 'new1.pem'
+ config.vm.provider :openstack do |os, override|
+   os.identity_api_version = '3'
+   os.openstack_auth_url = machines['AUTH_URL']
+   os.domain_name = machines['DOMAIN_NAME']
+   os.username = machines['USERNAME']
+   os.password = machines['PASSWORD']
+   os.tenant_name = machines['TENANT_NAME']
+   os.project_name = machines['PROJECT_NAME']
+   os.keypair_name = machines['KEY_PAIR_NAME']
+   os.image = machines['IMAGE']
+   os.flavor = machines['FLAVOR']
+ end
+ config.vm.define 'jenkins_server' do |s|
+      s.vm.provision 'docker'
+      s.vm.provision 'docker_compose', compose_version:'1.23.2'
+      s.vm.provision "shell", path: "install.sh"
+      s.vm.provider :openstack do |os, override|
+       os.server_name = 'AT08-WL-1'
+       override.vm.synced_folder '.', '/vagrant', disabled: true
+     end
+ end
 end
