@@ -21,6 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
    os.image = machines['IMAGE']
    os.flavor = machines['FLAVOR']
  end
+ config.vm.synced_folder "./file", "/home/ubuntu/docker"
  config.vm.define 'jenkins_server' do |s|
       s.vm.provision 'docker'
       s.vm.provision 'docker_compose', compose_version:'1.23.2'

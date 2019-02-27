@@ -2,7 +2,7 @@ AUTH_URL: http://10.28.3.240:5000/v3
 TENANT_NAME: 112e79abc2f94d69b24e3c48a7e4d22e
 PROJECT_NAME: fj_wilsonlopez_at08-desktop
 USERNAME: wilsonlopez
-PASSWORD: 
+PASSWORD: Muere12345
 DOMAIN_NAME: fundacion-jala
 FLAVOR: f2.desktop.large
 IMAGE: ubuntu-18.04-amd64-mate_desktop_19122018
